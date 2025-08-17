@@ -13,7 +13,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
-add_executable(kvstorage_tests tests/tests.cpp src/storage.cpp)
+add_executable(kvstorage_test tests/tests.cpp)
 
 
 target_link_libraries(kvstorage_test
@@ -22,6 +22,6 @@ target_link_libraries(kvstorage_test
     pthread 
 )
 
-
+enable_testing()
 include(GoogleTest)  
 add_test(NAME kvstorage_test COMMAND kvstorage_test)

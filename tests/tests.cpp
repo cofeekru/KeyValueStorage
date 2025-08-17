@@ -1,22 +1,24 @@
 #include "gtest/gtest.h"
 
-#include <../headers/storage.hpp>
+#include "../headers/storage.hpp"
+
 TEST(KVStorageTest, EmptyStorage) {
     std::vector<std::tuple<std::string, std::string, uint32_t>> data = {};
-    KVStorage<> storage(std::span(data));
+
+    KVStorage<std::chrono::system_clock> storage(data);;
     ASSERT_FALSE(storage.get("key").has_value());
 }
 
 TEST(KVStorageTest, SetAndGet) {
     std::vector<std::tuple<std::string, std::string, uint32_t>> data = {};
-    KVStorage<> storage(std::span(data));
+    KVStorage<std::chrono::system_clock> storage(data);
     storage.set("key", "value", 10);
     ASSERT_EQ(storage.get("key").value(), "value");
 }
 
 TEST(KVStorageTest, Remove) {
     std::vector<std::tuple<std::string, std::string, uint32_t>> data = {};
-    KVStorage<> storage(std::span(data));
+    KVStorage<std::chrono::system_clock> storage(data);
     storage.set("key", "value", 10);
     ASSERT_TRUE(storage.remove("key"));
     ASSERT_FALSE(storage.get("key").has_value());
@@ -24,7 +26,7 @@ TEST(KVStorageTest, Remove) {
 
 TEST(KVStorageTest, TTL) {
     std::vector<std::tuple<std::string, std::string, uint32_t>> data = {};
-    KVStorage<> storage(std::span(data));
+    KVStorage<std::chrono::system_clock> storage(data);
     storage.set("key", "value", 1);
     std::this_thread::sleep_for(std::chrono::seconds(2));
     ASSERT_FALSE(storage.get("key").has_value());
