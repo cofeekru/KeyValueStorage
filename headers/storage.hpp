@@ -42,8 +42,7 @@ public:
         std::shared_lock lock(shared_mtx);
         auto iter = storage.find(std::string(key));
         if (iter != storage.end() && iter->second.time_death > Clock::now()) {
-            auto value = std::make_optional<std::string>(iter->second.value);
-            return value;
+            return std::move(std::make_optional<std::string>(iter->second.value));
         } else {
             return std::nullopt;
         }
@@ -59,11 +58,11 @@ public:
 
         while (result.size() < count && iter_value != storage.end()) {
             if (iter_value->second.time_death > Clock::now()) {
-                result.push_back(std::make_pair(iter_value->first, iter_value->second.value));
+                result.emplace_back(iter_value->first, iter_value->second.value);
             }
             iter_value++;
         }
-        return result;
+        return std::move(result);
     }
 
     // removeOneExpiredEntry работает за O(n), где n - размер storage
@@ -74,7 +73,7 @@ public:
                 std::string key = iter->first;
                 auto result = std::make_optional<std::pair<std::string, std::string>>(std::make_pair(key, iter->second.value));
                 this->remove_(key);
-                return result;
+                return std::move(result);
             }
         }
         return std::nullopt;
